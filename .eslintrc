@@ -1,0 +1,24 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 7,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "babel"
+  ],
+  "rules": {
+    "semi": "off",
+    "one-var": "off",
+    "arrow-parens": "off",
+    "linebreak-style": "off",
+    "import/prefer-default-export": "off",
+    "prefer-const": "off",
+    "max-len": "off"
+  }
+}

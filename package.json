@@ -1,0 +1,9 @@
+{
+  "name": "pong",
+  "version": "0.0.1",
+  "dependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint-plugin-babel": "^5.1.0",
+    "lodash": "^4.17.10"
+  }
+}
