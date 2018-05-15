@@ -1,61 +1,43 @@
 import _ from 'lodash';
 
 class Particles {
+
   constructor(canvas, canvasContext) {
     this.canvas = canvas
     this.canvasContext = canvasContext
     if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(this.onFrame);
+      window.requestAnimationFrame(this.onFrame.bind(this));
     }
   }
 
-  static spawnParticles(type, x, y) {
+  throttledSpawnParticles() {
+    return _.throttle(this.spawnParticles.bind(this), 25, {
+      trailing: false
+    });
+  }
+
+  spawnParticles (type, x, y) {
     var color, numParticles;
     // _ref = this.getCursorPosition(), x = _ref.x, y = _ref.y;
     // x = 50, y = 50;
     numParticles = _(this.PARTICLE_NUM_RANGE).sample();
     color = this.getParticleColor(type);
-    return _(numParticles).times((function (_this) {
+    var _this = this
+    return _(numParticles).times((function () {
       return function () {
-        _this.particles[_this.particlePointer] = _this.createParticle(x, y, color);
+        _this.elements[_this.particlePointer] = _this.createParticle(x, y, color);
         return _this.particlePointer = (_this.particlePointer + 1) % _this.MAX_PARTICLES;
       };
     })(this));
   };
 
-  static getParticleColor(type) {
+  getParticleColor(type) {
     return this.PARTICLE_COLORS[type] || [255, 255, 255];
   };
 
-  static createParticle(x, y, color) {
-    return {
-      x: x,
-      y: y + 10,
-      alpha: 1,
-      color: color,
-      velocity: {
-        x: this.PARTICLE_VELOCITY_RANGE.x[0] + Math.random() * (this.PARTICLE_VELOCITY_RANGE.x[1] - this.PARTICLE_VELOCITY_RANGE.x[0]),
-        y: this.PARTICLE_VELOCITY_RANGE.y[0] + Math.random() * (this.PARTICLE_VELOCITY_RANGE.y[1] - this.PARTICLE_VELOCITY_RANGE.y[0])
-      }
-    };
-  };
-
-  throttledSpawnParticles = () => {
-    _.throttle(this.spawnParticles, 25, {
-      trailing: false
-    });
-  }
-
-  onFrame = (time) => {
-    this.drawParticles(time - this.lastDraw);
-    this.lastDraw = time;
-    return typeof window.requestAnimationFrame === "function" ? window.requestAnimationFrame(this.onFrame) : void 0;
-  };
-
-  drawParticles = (timeDelta) => {
+  drawParticles() {
     var particle, _i, _len, _ref, _results;
-    // this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    _ref = this.particles;
+    _ref = this.elements;
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       particle = _ref[_i];
@@ -72,35 +54,53 @@ class Particles {
     return _results;
   };
 
+  createParticle (x, y, color) {
+    return {
+      x: x,
+      y: y + 10,
+      alpha: 1,
+      color: color,
+      velocity: {
+        x: this.PARTICLE_VELOCITY_RANGE.x[0] + Math.random() * (this.PARTICLE_VELOCITY_RANGE.x[1] - this.PARTICLE_VELOCITY_RANGE.x[0]),
+        y: this.PARTICLE_VELOCITY_RANGE.y[0] + Math.random() * (this.PARTICLE_VELOCITY_RANGE.y[1] - this.PARTICLE_VELOCITY_RANGE.y[0])
+      }
+    };
+  };
+
+  onFrame(time) {
+    this.drawParticles(time - this.lastDraw);
+    this.lastDraw = time;
+    return typeof window.requestAnimationFrame === "function" ? window.requestAnimationFrame(this.onFrame.bind(this)) : void 0;
+  };
+
 }
 
+Particles.prototype.POWER_MODE_ACTIVATION_THRESHOLD = 200;
 
-Particles.POWER_MODE_ACTIVATION_THRESHOLD = 200;
+Particles.prototype.STREAK_TIMEOUT = 10 * 1000;
 
-Particles.STREAK_TIMEOUT = 10 * 1000;
+Particles.prototype.MAX_PARTICLES = 500;
 
-Particles.MAX_PARTICLES = 500;
+Particles.prototype.PARTICLE_NUM_RANGE = [5, 6, 7, 8, 9, 10, 11, 12];
 
-Particles.PARTICLE_NUM_RANGE = [5, 6, 7, 8, 9, 10, 11, 12];
+Particles.prototype.PARTICLE_GRAVITY = 0.075;
 
-Particles.PARTICLE_GRAVITY = 0.075;
+Particles.prototype.PARTICLE_SIZE = 8;
 
-Particles.PARTICLE_SIZE = 8;
+Particles.prototype.PARTICLE_ALPHA_FADEOUT = 0.96;
 
-Particles.PARTICLE_ALPHA_FADEOUT = 0.96;
-
-Particles.PARTICLE_VELOCITY_RANGE = {
+Particles.prototype.PARTICLE_VELOCITY_RANGE = {
   x: [-2.5, 2.5],
   y: [-7, -3.5]
 };
 
-Particles.particles = [];
+Particles.prototype.elements = [];
 
-Particles.particlePointer = 0;
+Particles.prototype.particlePointer = 0;
 
-Particles.lastDraw = 0;
+Particles.prototype.lastDraw = 0;
 
-Particles.PARTICLE_COLORS = {
+Particles.prototype.PARTICLE_COLORS = {
   "text": [0, 221, 255],
   "text.xml": [255, 255, 255],
   "keyword": [0, 221, 255],

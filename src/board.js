@@ -4,15 +4,16 @@ class Board extends Shape{
     super(x, y, 10, 10, exists)
     this.context = context
     this.color = 'white'
-    this.width = 50
+    this.width = 100
     this.height = 10
   }
-  draw = () => {
+  draw(){
     let { ctx } = this.context
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x, this.y, this.width, this.height)
   }
-  checkBounds = () => {
+  checkBounds(){
+    let { width, height } = this.context
     if((this.x + this.width) >= width) {
       this.x = (width - this.width);
     }
@@ -29,7 +30,7 @@ class Board extends Shape{
       this.y = 0;
     }
   };
-  setControls = () => {
+  setControls(){
     var _this = this;
     window.onkeydown = (e) => {
       console.log(e.keyCode)
@@ -45,19 +46,20 @@ class Board extends Shape{
       }
     };
   };
-  collisionDetect = (balls, particles) => {
+  collisionDetect(balls, particles){
     for(var j = 0; j < balls.length; j++) {
       if( balls[j].exists ) {
         var dx = (this.x < (balls[j].x + balls[j].size)) &&
           ((this.x + this.width) > (balls[j].x - balls[j].size))
         var dy = this.y > balls[j].y && (this.y < (balls[j].y + balls[j].size));
+        var middlex = (this.x + (this.width / 2))
 
-        var rate = (balls[j].x - (this.x + (this.width / 2))) / this.width * 2
+        var rate = balls[j].x > (this.x + this.width * 2)
         if (dx && dy) {
           console.log(rate)
-          particles.throttledSpawnParticles('text', balls[j].x, this.y);
-          balls[j].velY = balls[j].velY * -1.1;
-          balls[j].velX = balls[j].velX * (1.1);
+          particles.throttledSpawnParticles()('text', balls[j].x, this.y);
+          balls[j].velY = balls[j].velY * -1.01;
+          balls[j].velX = Math.abs(balls[j].velX) * (1.01) * ( middlex > balls[j].x ? -1 : 1 );
 
         }
       }

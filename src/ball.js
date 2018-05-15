@@ -1,4 +1,10 @@
 import Shape from './shape'
+
+function random(min,max) {
+  let num = Math.floor(Math.random()*(max-min)) + min;
+  return num;
+}
+
 class Ball extends Shape{
   constructor (x, y, velX, velY, exists, color, size, context){
     super(x, y, velX, velY, exists)
@@ -7,7 +13,7 @@ class Ball extends Shape{
     this.context = context
   }
 
-  draw = () => {
+  draw(){
     let { ctx } = this.context
     ctx.beginPath();
     ctx.fillStyle = this.color;
@@ -15,7 +21,7 @@ class Ball extends Shape{
     ctx.fill();
   }
 
-  update = () => {
+  update(){
     let { width, height, ctx } = this.context
     if((this.x + this.size) >= width) {
       this.velX = -(this.velX);
@@ -37,7 +43,7 @@ class Ball extends Shape{
     this.y += this.velY;
   }
 
-  collisionDetect = (balls) => {
+  collisionDetect(balls){
     for(var j = 0; j < balls.length; j++) {
       if(!(this === balls[j])) {
         var dx = this.x - balls[j].x;

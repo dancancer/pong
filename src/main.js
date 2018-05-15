@@ -24,7 +24,7 @@ canvas1.height = window.innerWidth*3/2 ;
 let balls = [];
 
 
-let particles = new Particles(canvas1, ctx1);
+let particles = new Particles(canvas, ctx);
 
 // define loop that keeps drawing the scene constantly
 
